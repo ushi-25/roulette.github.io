@@ -1,75 +1,121 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <title>practice</title>
-    <link rel="stylesheet" href="timer.css">
-    <script>
-    var count = 180;
-    var interval_Id;
-    var count_flg=false;
-    var timer = document.getElementById("timer");
+  <head>
+  <meta charset="utf-8">
+  <title>roulette</title>
+  <style>
+	table {
+	        border: solid 5px;
+	    }
+	    td,td {
+	        padding: 50px;
+	        font-size:30px;
+	        border: solid 1px;
+	    }
+	    .flam{
+	        margin: 0 auto;
+	        float: left;
+	        padding: 20px 50px 100px 50px;
+	        border-radius: 10px;
+	    }
+	    button{
+	        margin: 0 auto;
+	        position: relative;
+	        top: 35px;
+	        left: -3px;
+	        margin-left: 18px;
+	        padding: 10px 30px;
+	        font-size: 20px;
+	        font-weight:bold;
+	    }
+	    .color_1{
+	        background-color:#30A9DE;
+	    }
+	    .color_2{
+	        background-color:#f8ca00; 
+	    }
+	    .color_3{
+	        background-color:#ef9e9f;
+	        color:gray;
+	    }
+	</style>
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    var ary = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+	var stop_num = null;
+	var interval_Id, rand;
+	
+	$(function() {
+	    $("#stop").prop('disabled', true);
+        var table = $("#table_1");
+        var count=1;
+        var start_flag=false;
         
-        function click_start(){
-            if(count_flg===false){
-            interval_Id = setInterval(count_timer,1000);
-            count_flg=true;
-            start.disabled = true;
-            }
-        }
-        
-        function click_stop(){
-            if(count_flg===true){
-            clearInterval(interval_Id);
-            count_flg=false;
-            start.disabled = false;
-            }
-        }
-        
-        function click_reset(){
-            count = 180;
-            min= 0;
-            sec= 0;
-            timer= document.getElementById("timer").innerHTML ='03:00';
-            click_stop();
-        }
-    
-        function count_timer(){
-                if(count>0){
-                    var min=Math.floor(count/60);
-                    var sec=Math.floor(count%60);
-                    sec=('0' + sec).slice(-2);
-                    timer = document.getElementById("timer").innerHTML = '0' + min+':' +sec;
-                    count--;
-                }else{
-                    clearInterval(interval_Id);
-                    timer.innerHTML='Time UP!';
+        for(var i=1;i<5;i++){
+                var tr=$('<tr>');
+                for(var j=1;j<5;j++){
+                    tr.append($('<td>').attr('id','num'+count).html([count]));
+                    count++;
                 }
+            table.append(tr);
         }
-        
 
-        
-        window.onload = function() {
-            var start = document.getElementById('start');
-            start.addEventListener('click',click_start,false);
-            var stop = document.getElementById('stop');
-            stop.addEventListener('click',click_stop,false);
-            var reset = document.getElementById('reset');
-            reset.addEventListener('click',click_reset,false);
+		$("#start").click(function() {
+		    if(start_flag===false){
+    			interval_Id = setInterval(random, 10);
+    			$("#start").prop('disabled', true);
+    			$("#stop").prop('disabled', false);
+    			$("#num" + stop_num).addClass("color_3");
+    			start_flag=true;
+		    }
+		});
 
-        }
- 
-    </script>
-</head>
+		$("#stop").click(function() {
+		    if(start_flag===true){
+    		    $("#num" + stop_num).addClass("color_2");
+    			if(ary.length > 0){
+    				clearInterval(interval_Id);
+    				ary.splice(rand, 1);
+    				$("#start").prop("disabled", false);
+    				$("#stop").prop('disabled', true);
+                    start_flag=false;
+    			} else {
+    				$("#start").prop("disabled", true);
+    				$("#stop").prop('disabled', true);
+    			}
+		    }
+		});
 
-<body>
-    <div class =flam>
-         <div id="timer">03:00</div>
-            <button id="start">スタート</button>
-            <button id="stop">ストップ</button>
-            <button id="reset">リセット</button>
+		$("#reset").click(function() {
+		    if(start_flag===true){
+			    clearInterval(interval_Id);
+			    start_flag=false;
+		    }
+			$("#start").prop("disabled", false);
+			ary = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+			stop_num = null;
+			$("td").removeClass("color_1").removeClass("color_2").removeClass("color_3");
+		});
+	});
+	
+	function random() {
+	    $("#num" + stop_num).removeClass("color_1");
+		rand = Math.floor(Math.random() * ary.length);
+		stop_num = ary[rand];
+		if (stop_num !== null) {
+		    $("#num" + stop_num).addClass("color_1");
+		}
+	}
 
+   
+
+	</script>
+  <body>
+    <table id="table_1"></table>
+    <div class="flam">
+      <button id="start">スタート</button>
+      <button id="stop">ストップ</button>
+      <button id="reset">リセット</button>
     </div>
-
-</body>
+  </body>
 </html>
